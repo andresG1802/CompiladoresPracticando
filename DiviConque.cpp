@@ -98,15 +98,77 @@ vector<string> separarO(string cadena)
     return elementos;
 }
 
-//Regla 1:Si es un cadenaSimple
+//Regla 1:Si es un cadenaSimple Osea No tiene asteriscos
+
+bool regla1(string cadena)
+{
+    //De momento cumple
+    bool cumpleRegla=true;
+
+    for(int i=0;i<cadena.size();i++)
+    {
+        if(cadena[i]=='*')
+        {
+            //Pero si no se encuentra
+            cumpleRegla=false;
+            break;
+        }
+    }
+
+    return cumpleRegla;
+}
 //Regla 2: Si termina en asterisco ab*
+
+bool regla2(string cadena)
+{
+    bool cumpleRegla=false;
+    int contador=0;
+    for(int i=0;i<cadena.size();i++)
+    {
+        if(cadena[i]=='*')
+        {
+            //Pero si no se encuentra
+            contador++;
+        }
+    }
+
+    if(contador==1 && cadena[cadena.size()-1]=='*'){
+        cumpleRegla=true;
+    }
+
+    return cumpleRegla;
+}
 //Regla 3: Si tiene varios o tiene un asterisco al final
+
+
+
+vector<string> funcionParaCadenaAsteriscoAlFinal(string cadena,int cantidad)
+{
+    vector<string> cadenasGeneradas;
+    string parteSinasterisco;
+    string generadorCaracter;
+    for(int i=0;i<cadena.size()-2;i++)
+    {
+        parteSinasterisco+=cadena[i];
+    }
+
+    cadenasGeneradas.push_back(parteSinasterisco);
+
+    for(int i=0;i<cantidad;i++)
+    {
+        generadorCaracter+=cadena[cadena.size()-2];
+        cadenasGeneradas.push_back(parteSinasterisco+generadorCaracter);
+    }
+
+    return cadenasGeneradas;
+}
+
 int main()
 {
     string cadena;
     int cantidad;
-
-    vector<string> alfabetoGenerado;
+    vector<vector<string>> alfabetoGenerado2;
+    vector<string> alfabetoGenerado1;
     
     cout<<"Cadena: ";cin>>cadena;
     cout<<"Cantidad: ";cin>>cantidad;
@@ -118,39 +180,70 @@ int main()
 
     for(string cadena:separarO(cadena))
     {
-        verificandoAsteriscoEnlaCadena(cadena);
-
-
-        cout<<contador+1<<".Imprimiendo cadena divida:"<<endl;
-        //Hacer un array bidimensional
-
-        vector<vector<string>> subCadenasSeparadas;
-        vector<string> vectorSubCadena;
-        
-        for(string& subCadena:cadenasDividas)
+        if(regla1(cadena))
         {
-            cout<<subCadena<<endl;
-            if(subCadena.size()>2)
-            {
-                vectorSubCadena = divideSubCadena(subCadena);
-                subCadenasSeparadas.push_back(vectorSubCadena);
-            }
-            else{
-                
-            }
+            alfabetoGenerado1.push_back(cadena);
         }
-        cout<<"Imprimiendo subCadenas de una cadena ya dividida"<<endl;
-        for(int i=0;i<subCadenasSeparadas.size();++i)
+        else if(regla2(cadena))
         {
-            for(int j=0;j<subCadenasSeparadas[0].size();++j)
-            {
-                cout<<subCadenasSeparadas[i][j]<<endl;
-            }
+            vector<string> cadenasIteradasParaRegla2 = funcionParaCadenaAsteriscoAlFinal(cadena,cantidad);
+            alfabetoGenerado2.push_back(cadenasIteradasParaRegla2);
         }
+        else if(!regla1(cadena) && !regla2(cadena))
+        {
+            verificandoAsteriscoEnlaCadena(cadena);
+            cout<<contador+1<<".Imprimiendo cadena divida:"<<endl;
+            //Hacer un array bidimensional
 
-        contador++;
+            vector<vector<string>> subCadenasSeparadas;
+            vector<string> vectorSubCadena;
+            
+            for(string& subCadena:cadenasDividas)
+            {
+                cout<<subCadena<<endl;
+                if(subCadena.size()>2)
+                {
+                    vectorSubCadena = divideSubCadena(subCadena);
+                    subCadenasSeparadas.push_back(vectorSubCadena);
+                }
+                else{
+                    
+                }
+            }
+            cout<<"Imprimiendo subCadenas de una cadena ya dividida"<<endl;
+            for(int i=0;i<subCadenasSeparadas.size();++i)
+            {
+                for(int j=0;j<subCadenasSeparadas[0].size();++j)
+                {
+                    cout<<subCadenasSeparadas[i][j]<<endl;
+                }
+            }
+            contador++;
+        }
     }
 
     
+
+    cout<<"Imprimiendo alfabeto"<<endl;
+    //Juntando
+    vector<string> AlfabetoFinal=alfabetoGenerado1;
+    if(alfabetoGenerado2.size()>0)
+    {
+        for(int i=0;i<alfabetoGenerado2.size();++i)
+        {
+            for(int j=0;j<alfabetoGenerado2[i].size();++j)
+            {
+                AlfabetoFinal.push_back(alfabetoGenerado2[i][j]);
+            }
+        }
+    }
+    //Ordenando
+
+    //Imprimiendo
+    for(int i=0;i<AlfabetoFinal.size();i++)
+    {
+        cout<<AlfabetoFinal[i]<<endl;
+    }
+
     return 0;
 }
